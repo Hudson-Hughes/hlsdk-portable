@@ -319,8 +319,7 @@ void CGauss::StartFire( void )
 
 	if( m_pPlayer->m_flStartCharge > gpGlobals->time )
 		m_pPlayer->m_flStartCharge = gpGlobals->time;
-	UTIL_MakeVectors( m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle );
-	Vector vecAiming = gpGlobals->v_forward;
+	Vector vecAiming = m_pPlayer->GetAimVector();
 	Vector vecSrc = m_pPlayer->GetGunPosition(); // + gpGlobals->v_up * -8 + gpGlobals->v_right * 8;
 
 	if( gpGlobals->time - m_pPlayer->m_flStartCharge > GetFullChargeTime() )

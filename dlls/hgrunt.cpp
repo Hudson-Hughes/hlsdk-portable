@@ -40,6 +40,7 @@
 #include	"soundent.h"
 #include	"effects.h"
 #include	"customentity.h"
+#include	"game.h"
 
 int g_fGruntQuestion;				// true if an idle grunt asked a question. Cleared when someone answers.
 
@@ -799,7 +800,8 @@ void CHGrunt::Shoot( void )
 
 	Vector vecShellVelocity = gpGlobals->v_right * RANDOM_FLOAT( 40, 90 ) + gpGlobals->v_up * RANDOM_FLOAT( 75, 200 ) + gpGlobals->v_forward * RANDOM_FLOAT( -40, 40 );
 	EjectBrass( vecShootOrigin - vecShootDir * 24, vecShellVelocity, pev->angles.y, m_iBrassShell, TE_BOUNCE_SHELL );
-	FireBullets( 1, vecShootOrigin, vecShootDir, VECTOR_CONE_10DEGREES, 2048, BULLET_MONSTER_MP5 ); // shoot +-5 degrees
+	Vector vecCone = VECTOR_CONE_10DEGREES * ( 1.0f / flex_accuracy_mult.value );
+	FireBullets( 1, vecShootOrigin, vecShootDir, vecCone, 2048, BULLET_MONSTER_MP5, 0, (int)(gSkillData.monDmgMP5 * flex_damage_mult.value) );
 
 	pev->effects |= EF_MUZZLEFLASH;
 
@@ -826,7 +828,8 @@ void CHGrunt::Shotgun( void )
 
 	Vector vecShellVelocity = gpGlobals->v_right * RANDOM_FLOAT( 40, 90 ) + gpGlobals->v_up * RANDOM_FLOAT( 75, 200 ) + gpGlobals->v_forward * RANDOM_FLOAT( -40, 40 );
 	EjectBrass( vecShootOrigin - vecShootDir * 24, vecShellVelocity, pev->angles.y, m_iShotgunShell, TE_BOUNCE_SHOTSHELL ); 
-	FireBullets( gSkillData.hgruntShotgunPellets, vecShootOrigin, vecShootDir, VECTOR_CONE_15DEGREES, 2048, BULLET_PLAYER_BUCKSHOT, 0 ); // shoot +-7.5 degrees
+	Vector vecShotCone = VECTOR_CONE_15DEGREES * ( 1.0f / flex_accuracy_mult.value );
+	FireBullets( gSkillData.hgruntShotgunPellets, vecShootOrigin, vecShootDir, vecShotCone, 2048, BULLET_PLAYER_BUCKSHOT, 0, (int)(gSkillData.plrDmgBuckshot * flex_damage_mult.value) );
 
 	pev->effects |= EF_MUZZLEFLASH;
 

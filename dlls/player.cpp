@@ -4317,14 +4317,45 @@ void CBasePlayer::EnableControl( BOOL fControl )
 #define DOT_25DEGREE  0.9063077870367
 
 //=========================================================
+// Helper: get crosshair Y fraction (0-1), matches engine cl_crosshair_y
+//=========================================================
+static float GetCrosshairY( void )
+{
+	float fl = CVAR_GET_FLOAT( "crosshair_y" );
+	if( fl <= 0.0f )
+		fl = CVAR_GET_FLOAT( "cl_crosshair_y" );
+	if( fl <= 0.0f )
+		fl = 0.3f;  // default 30% from top to match engine crosshair draw
+	if( fl < 0.0f ) return 0.0f;
+	if( fl > 1.0f ) return 1.0f;
+	return fl;
+}
+
+//=========================================================
+// Aim vector with crosshair offset, no autoaim (for weapons that use v_forward)
+//=========================================================
+Vector CBasePlayer::GetAimVector( void )
+{
+	float flCy = GetCrosshairY();
+	Vector vecOff = Vector( -( 0.5f - flCy ) * 45.0f, 0, 0 );
+	UTIL_MakeVectors( pev->v_angle + pev->punchangle + vecOff );
+	return gpGlobals->v_forward;
+}
+
+//=========================================================
 // Autoaim
 // set crosshair position to point to enemey
 //=========================================================
 Vector CBasePlayer::GetAutoaimVector( float flDelta )
 {
+	// Apply crosshair Y offset so bullets go where the crosshair is drawn
+	float flCrosshairY = GetCrosshairY();
+	float flPitchOffset = -( 0.5f - flCrosshairY ) * 45.0f;  // 45 = half of 90 deg FOV
+	Vector vecCrosshairOffset = Vector( flPitchOffset, 0, 0 );
+
 	if( g_iSkillLevel == SKILL_HARD )
 	{
-		UTIL_MakeVectors( pev->v_angle + pev->punchangle );
+		UTIL_MakeVectors( pev->v_angle + pev->punchangle + vecCrosshairOffset );
 		return gpGlobals->v_forward;
 	}
 
@@ -4395,7 +4426,7 @@ Vector CBasePlayer::GetAutoaimVector( float flDelta )
 
 	// ALERT( at_console, "%f %f\n", angles.x, angles.y );
 
-	UTIL_MakeVectors( pev->v_angle + pev->punchangle + m_vecAutoAim );
+	UTIL_MakeVectors( pev->v_angle + pev->punchangle + m_vecAutoAim + vecCrosshairOffset );
 	return gpGlobals->v_forward;
 }
 
@@ -4414,7 +4445,9 @@ Vector CBasePlayer::AutoaimDeflection( Vector &vecSrc, float flDist, float flDel
 		return g_vecZero;
 	}
 
-	UTIL_MakeVectors( pev->v_angle + pev->punchangle + m_vecAutoAim );
+	float flCy = GetCrosshairY();
+	Vector vecOff = Vector( -( 0.5f - flCy ) * 45.0f, 0, 0 );
+	UTIL_MakeVectors( pev->v_angle + pev->punchangle + m_vecAutoAim + vecOff );
 
 	// try all possible entities
 	bestdir = gpGlobals->v_forward;

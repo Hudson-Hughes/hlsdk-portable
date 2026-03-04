@@ -46,6 +46,11 @@ extern cvar_t bhopcap;
 extern cvar_t sv_pushable_fixed_tick_fudge;
 extern cvar_t sv_busters;
 
+// Flex value CVARs
+extern cvar_t flex_damage_mult;
+extern cvar_t flex_accuracy_mult;
+extern cvar_t flex_bullet_speed;
+
 // Engine Cvars
 extern cvar_t *g_psv_gravity;
 extern cvar_t *g_psv_aim;
