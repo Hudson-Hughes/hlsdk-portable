@@ -445,7 +445,8 @@ void CSatchel::Throw( void )
 #if !CLIENT_DLL
 		Vector vecSrc = m_pPlayer->pev->origin;
 
-		Vector vecThrow = gpGlobals->v_forward * 274 + m_pPlayer->pev->velocity;
+		Vector vecAiming = m_pPlayer->GetAimVector();
+		Vector vecThrow = vecAiming * 274 + m_pPlayer->pev->velocity;
 
 		CBaseEntity *pSatchel = Create( "monster_satchel", vecSrc, Vector( 0, 0, 0 ), m_pPlayer->edict() );
 		pSatchel->pev->velocity = vecThrow;

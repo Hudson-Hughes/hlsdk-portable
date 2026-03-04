@@ -133,7 +133,13 @@ void CHandGrenade::WeaponIdle( void )
 
 	if( m_flStartThrow )
 	{
+		float flCy = CVAR_GET_FLOAT( "crosshair_y" );
+		if( flCy <= 0.0f ) flCy = CVAR_GET_FLOAT( "cl_crosshair_y" );
+		if( flCy <= 0.0f ) flCy = 0.3f;
+		float flPitchOffset = -( 0.5f - flCy ) * 45.0f;
+
 		Vector angThrow = m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle;
+		angThrow.x += flPitchOffset;
 
 		if( angThrow.x < 0.0f )
 			angThrow.x = -10.0f + angThrow.x * ( ( 90.0f - 10.0f ) / 90.0f );

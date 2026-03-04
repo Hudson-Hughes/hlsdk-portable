@@ -180,9 +180,9 @@ int CCrowbar::Swing( int fFirst )
 
 	TraceResult tr;
 
-	UTIL_MakeVectors( m_pPlayer->pev->v_angle );
+	Vector vecAiming = m_pPlayer->GetAimVector();
 	Vector vecSrc = m_pPlayer->GetGunPosition();
-	Vector vecEnd = vecSrc + gpGlobals->v_forward * 32.0f;
+	Vector vecEnd = vecSrc + vecAiming * 32.0f;
 
 	UTIL_TraceLine( vecSrc, vecEnd, dont_ignore_monsters, ENT( m_pPlayer->pev ), &tr );
 

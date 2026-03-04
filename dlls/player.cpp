@@ -4326,6 +4326,13 @@ static float GetCrosshairY( void )
 		fl = CVAR_GET_FLOAT( "cl_crosshair_y" );
 	if( fl <= 0.0f )
 		fl = 0.3f;  // default 30% from top to match engine crosshair draw
+
+	// static float last_fl = -1.0f;
+	// if( fl != last_fl ) {
+	//    ALERT( at_console, "Server crosshair_y: %f\n", fl );
+	//    last_fl = fl;
+	// }
+
 	if( fl < 0.0f ) return 0.0f;
 	if( fl > 1.0f ) return 1.0f;
 	return fl;
