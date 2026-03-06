@@ -296,7 +296,6 @@ public:
 	int Illumination( void );
 
 	void ResetAutoaim( void );
-	Vector GetAimVector( void );  // aim with crosshair offset, no autoaim
 	Vector GetAutoaimVector( float flDelta  );
 	Vector AutoaimDeflection( Vector &vecSrc, float flDist, float flDelta  );
 

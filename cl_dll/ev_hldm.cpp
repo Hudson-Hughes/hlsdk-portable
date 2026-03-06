@@ -380,7 +380,82 @@ Go to the trouble of combining multiple pellets into a single damage call.
 */
 void EV_HLDM_FireBullets( int idx, float *forward, float *right, float *up, int cShots, float *vecSrc, float *vecDirShooting, float flDistance, int iBulletType, int iTracerFreq, int *tracerCount, float flSpreadX, float flSpreadY )
 {
-	// server-side projectile entities handle tracing, damage, decals, and trails
+	int i;
+	pmtrace_t tr;
+	int iShot;
+	int tracer;
+
+	for( iShot = 1; iShot <= cShots; iShot++ )	
+	{
+		vec3_t vecDir, vecEnd;
+		float x, y, z;
+
+		//We randomize for the Shotgun.
+		if( iBulletType == BULLET_PLAYER_BUCKSHOT )
+		{
+			do{
+				x = gEngfuncs.pfnRandomFloat( -0.5, 0.5 ) + gEngfuncs.pfnRandomFloat( -0.5, 0.5 );
+				y = gEngfuncs.pfnRandomFloat( -0.5, 0.5 ) + gEngfuncs.pfnRandomFloat( -0.5, 0.5 );
+				z = x * x + y * y;
+			}while( z > 1 );
+
+			for( i = 0 ; i < 3; i++ )
+			{
+				vecDir[i] = vecDirShooting[i] + x * flSpreadX * right[i] + y * flSpreadY * up [i];
+				vecEnd[i] = vecSrc[i] + flDistance * vecDir[i];
+			}
+		}//But other guns already have their spread randomized in the synched spread.
+		else
+		{
+			for( i = 0 ; i < 3; i++ )
+			{
+				vecDir[i] = vecDirShooting[i] + flSpreadX * right[i] + flSpreadY * up [i];
+				vecEnd[i] = vecSrc[i] + flDistance * vecDir[i];
+			}
+		}
+
+		gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( false, true );
+
+		// Store off the old count
+		gEngfuncs.pEventAPI->EV_PushPMStates();
+
+		// Now add in all of the players.
+		gEngfuncs.pEventAPI->EV_SetSolidPlayers( idx - 1 );	
+
+		gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
+		gEngfuncs.pEventAPI->EV_PlayerTrace( vecSrc, vecEnd, PM_NORMAL, -1, &tr );
+
+		tracer = EV_HLDM_CheckTracer( idx, vecSrc, tr.endpos, forward, right, iBulletType, iTracerFreq, tracerCount );
+
+		// do damage, paint decals
+		if( tr.fraction != 1.0f )
+		{
+			switch( iBulletType )
+			{
+			default:
+			case BULLET_PLAYER_9MM:
+				EV_HLDM_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
+				EV_HLDM_DecalGunshot( &tr, iBulletType );
+				break;
+			case BULLET_PLAYER_MP5:
+				if( !tracer )
+				{
+					EV_HLDM_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
+					EV_HLDM_DecalGunshot( &tr, iBulletType );
+				}
+				break;
+			case BULLET_PLAYER_BUCKSHOT:
+				EV_HLDM_DecalGunshot( &tr, iBulletType );
+				break;
+			case BULLET_PLAYER_357:
+				EV_HLDM_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
+				EV_HLDM_DecalGunshot( &tr, iBulletType );
+				break;
+			}
+		}
+
+		gEngfuncs.pEventAPI->EV_PopPMStates();
+	}
 }
 
 //======================

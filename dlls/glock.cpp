@@ -162,7 +162,7 @@ void CGlock::GlockFire( float flSpread, float flCycleTime, BOOL fUseAutoAim )
 	}
 	else
 	{
-		vecAiming = m_pPlayer->GetAimVector();
+		vecAiming = gpGlobals->v_forward;
 	}
 
 	Vector vecDir;

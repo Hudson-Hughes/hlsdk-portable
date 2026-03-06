@@ -454,8 +454,9 @@ void CTripmine::PrimaryAttack( void )
 	if( m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0 )
 		return;
 
+	UTIL_MakeVectors( m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle );
 	Vector vecSrc = m_pPlayer->GetGunPosition();
-	Vector vecAiming = m_pPlayer->GetAimVector();
+	Vector vecAiming = gpGlobals->v_forward;
 
 	TraceResult tr;
 
