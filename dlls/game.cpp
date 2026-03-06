@@ -463,8 +463,8 @@ cvar_t	sk_player_leg3	= { "sk_player_leg3","1" };
 cvar_t sv_pushable_fixed_tick_fudge = { "sv_pushable_fixed_tick_fudge", "15" };
 cvar_t sv_busters = { "sv_busters", "0" };
 
-cvar_t flex_damage_mult = { "flex_damage_mult", "4" };
-cvar_t flex_accuracy_mult = { "flex_accuracy_mult", "4" };
+cvar_t flex_damage_mult = { "flex_damage_mult", "2" };
+cvar_t flex_accuracy_mult = { "flex_accuracy_mult", "2" };
 cvar_t flex_bullet_speed = { "flex_bullet_speed", "1320" };
 
 // Register your console variables here
